@@ -11,8 +11,10 @@ class Worker(threading.Thread):
         super(Worker, self).__init__()
         self.num = num
         self.loop = loop
+        self.vector = util.Vector()
         self.score = 0
         self.code = ""
+        self.state = []
 
     def request(self, input_vector):
         payload = {'code': input_vector}
@@ -27,8 +29,9 @@ class Worker(threading.Thread):
 
         if self.score < point:
             self.score = point
+            self.code = input_vector
             print("score {0}: code: {1}".format(self.score, input_vector))
 
     def run(self):
         for i in range(self.loop):
-            self.request(util.generate_random_vector())
+            self.request(self.vector.get_vector())
