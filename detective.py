@@ -1,7 +1,7 @@
-__author__ = 'k'
-
 import time
 import worker
+
+__author__ = 'k'
 
 if __name__ == '__main__':
     thread_count = 96
