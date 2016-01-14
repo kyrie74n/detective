@@ -37,12 +37,17 @@ class Worker(threading.Thread):
         # print("score {0}: code: {1}".format(self.score, input_vector))
 
     def run(self):
-        v1 = util.Vector(None)
+        v1 = util.Vector(self.vector.get_vector())
         v1.request()
-        v2 = util.Vector(None)
-        v2.request()
 
-        print(v1.diff(v2))
+        for i in range(24):
+            self.vector.update_digits1(i, 11)
+            v2 = util.Vector(self.vector.get_vector())
+            v2.request()
+
+            print(str(v2.dump()).strip("[]").replace(",", "\t"))
+            # print(v1.diff(v2).strip("[]").replace(",", "\t"))
+            v1 = v2
 
     def random_search(self):
         for i in range(self.loop):

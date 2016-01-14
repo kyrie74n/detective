@@ -6,7 +6,9 @@ __author__ = 'k'
 if __name__ == '__main__':
     thread_count = 1
     initial_vector = [
-        "ED-JC-FI-DF-LI-AK",
+        "ZZ-ZZ-ZZ-ZZ-ZZ-AZ",
+        "AA-AA-AA-AA-AA-AA",
+        "XX-XX-XX-XX-XX-XX",
         "FK-DB-LD-AW-HL-AV",
         "GG-GI-MC-AD-CK-FP",
         "OI-DT-TV-XW-AB-XQ"

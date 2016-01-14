@@ -69,6 +69,9 @@ class Vector:
 
         return str(d)
 
+    def dump(self):
+        return self.indicator["array"] + self.indicator["array2"]
+
     def score(self):
         a = reduce(lambda x, y: x+y, self.indicator["array"])
         b = reduce(lambda x, y: x+y, self.indicator["array2"])
