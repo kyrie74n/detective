@@ -17,7 +17,7 @@ class Worker(threading.Thread):
         self.code = ""
         self.queue = queue.Queue()
 
-    def request(self, input_vector):
+    def deprecated_request(self, input_vector):
         payload = {'code': input_vector}
         headers = {"X-Requested-With": "XMLHttpRequest"}
         res = requests.post("http://xxx.jp/test_last/code.php",
@@ -37,13 +37,26 @@ class Worker(threading.Thread):
         # print("score {0}: code: {1}".format(self.score, input_vector))
 
     def run(self):
-        # for i in range(self.loop):
-        #     self.request(self.vector.get_vector())
-        #     self.vector.random_vector()
-        #
-        # print("id:{0} score:{1} code:{2}".format(self.num, self.score, self.code))
+        v1 = util.Vector(None)
+        v1.request()
+        v2 = util.Vector(None)
+        v2.request()
 
-        self.request(self.vector.get_vector())
+        print(v1.diff(v2))
+
+    def random_search(self):
+        for i in range(self.loop):
+            self.vector.request()
+            if self.score < self.vector.score():
+                self.score = self.vector.score()
+                print(self.vector.get_vector())
+
+            self.vector.random_vector()
+
+        print("id:{0} score:{1} code:{2}".format(self.num, self.score, self.code))
+
+    def queue_search(self):
+        self.queue.put(self.vector.get_vector())
 
         while not self.queue.empty():
             print("search in " + self.vector.get_vector())
@@ -54,5 +67,9 @@ class Worker(threading.Thread):
                 self.vector.set_vector(current)
                 for i in range(self.loop):
                     for j in range(self.loop):
-                        self.vector.update_digits(i, j, d)
-                        self.request(self.vector.get_vector())
+                        self.vector.update_digits2(i, j, d)
+                        self.vector.request()
+                        if self.score < self.vector.score():
+                            self.score = self.vector.score()
+                            self.queue.put(self.vector.get_vector())
+                            print("score {0}: code: {1}".format(self.score, self.vector.get_vector()))

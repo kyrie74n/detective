@@ -4,7 +4,7 @@ import worker
 __author__ = 'k'
 
 if __name__ == '__main__':
-    thread_count = 4
+    thread_count = 1
     initial_vector = [
         "ED-JC-FI-DF-LI-AK",
         "FK-DB-LD-AW-HL-AV",

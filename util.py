@@ -1,4 +1,7 @@
+from functools import reduce
+import json
 import random
+import requests
 
 __author__ = 'k'
 
@@ -12,6 +15,8 @@ class Vector:
     def __init__(self, initial_vector):
         super(Vector, self).__init__()
         self.digits = []
+        self.indicator = None
+
         if initial_vector is None:
             for i in range(12):
                 self.digits.append(random.randrange(24))
@@ -38,6 +43,33 @@ class Vector:
             + letter(self.digits[8]) + letter(self.digits[9]) + "-" \
             + letter(self.digits[10]) + letter(self.digits[11])
 
-    def update_digits(self, i, j, param):
+    def update_digits1(self, i, param):
+        self.digits[param] = i
+
+    def update_digits2(self, i, j, param):
         self.digits[2 * param] = i
         self.digits[2 * param + 1] = j
+
+    def request(self):
+        payload = {'code': self.get_vector()}
+        headers = {"X-Requested-With": "XMLHttpRequest"}
+        res = requests.post("http://inspyre.jp/test_last/code.php",
+                            data=json.dumps(payload),
+                            headers=headers)
+
+        self.indicator = json.loads(res.text.strip("()"))
+
+    def diff(self, vector):
+        d = []
+        for i in range(len(self.indicator["array"])):
+            d.append(self.indicator["array"][i] - vector.indicator["array"][i])
+
+        for i in range(len(self.indicator["array2"])):
+            d.append(self.indicator["array2"][i] - vector.indicator["array2"][i])
+
+        return str(d)
+
+    def score(self):
+        a = reduce(lambda x, y: x+y, self.indicator["array"])
+        b = reduce(lambda x, y: x+y, self.indicator["array2"])
+        return a + b
