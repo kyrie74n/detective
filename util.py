@@ -35,13 +35,23 @@ class Vector:
         for i in range(12):
             self.digits[i] = random.randrange(12)
 
-    def get_vector(self):
-        return letter(self.digits[0]) + letter(self.digits[1]) + "-" \
-            + letter(self.digits[2]) + letter(self.digits[3]) + "-" \
-            + letter(self.digits[4]) + letter(self.digits[5]) + "-" \
-            + letter(self.digits[6]) + letter(self.digits[7]) + "-" \
-            + letter(self.digits[8]) + letter(self.digits[9]) + "-" \
-            + letter(self.digits[10]) + letter(self.digits[11])
+    def get_vector(self, d=None):
+        v = ""
+        if d is None:
+            for i in range(12):
+                v += letter(self.digits[i])
+                if i % 2 is 1:
+                    v += "-"
+            return v.rstrip("-")
+        else:
+            for i in range(12):
+                if i is d:
+                    v += "?"
+                else:
+                    v += letter(self.digits[i])
+                if i % 2 is 1:
+                    v += "-"
+            return v.rstrip("-")
 
     def update_digits1(self, i, param):
         self.digits[param] = i

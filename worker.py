@@ -17,36 +17,28 @@ class Worker(threading.Thread):
         self.code = ""
         self.queue = queue.Queue()
 
-    def deprecated_request(self, input_vector):
-        payload = {'code': input_vector}
-        headers = {"X-Requested-With": "XMLHttpRequest"}
-        res = requests.post("http://xxx.jp/test_last/code.php",
-                            data=json.dumps(payload),
-                            headers=headers)
-
-        result = json.loads(res.text.strip("()"))
-
-        point = reduce(lambda x, y: x+y, result["array"]) + reduce(lambda x, y: x+y, result["array2"])
-
-        if self.score < point:
-            self.score = point
-            self.queue.put(input_vector)
-            print("score {0}: code: {1}".format(self.score, input_vector))
-
-        # self.score = point
-        # print("score {0}: code: {1}".format(self.score, input_vector))
-
     def run(self):
-        v1 = util.Vector(self.vector.get_vector())
-        v1.request()
+        for j in range(24):
+            self.vector.update_digits1(j, 0)
+            self.dump_search(1)
 
+    def dump_search(self, d):
+        print("dump in:" + self.vector.get_vector(d))
         for i in range(24):
-            self.vector.update_digits1(i, 11)
+            self.vector.update_digits1(i, d)
             v2 = util.Vector(self.vector.get_vector())
             v2.request()
-
             print(str(v2.dump()).strip("[]").replace(",", "\t"))
-            # print(v1.diff(v2).strip("[]").replace(",", "\t"))
+
+    def diff_search(self, d):
+        v1 = util.Vector(self.vector.get_vector())
+        v1.request()
+        print("diff from:" + self.vector.get_vector(d))
+        for i in range(24):
+            self.vector.update_digits1(i, d)
+            v2 = util.Vector(self.vector.get_vector())
+            v2.request()
+            print(v1.diff(v2).strip("[]").replace(",", "\t"))
             v1 = v2
 
     def random_search(self):
@@ -62,12 +54,10 @@ class Worker(threading.Thread):
 
     def queue_search(self):
         self.queue.put(self.vector.get_vector())
-
         while not self.queue.empty():
             print("search in " + self.vector.get_vector())
             print("queue in: " + str(self.queue.qsize()))
             current = self.queue.get()
-
             for d in range(6):
                 self.vector.set_vector(current)
                 for i in range(self.loop):
